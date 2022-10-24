@@ -19,10 +19,60 @@ runs:
   using: "composite"
   steps:
     - id: setup
-      run: |
-        action_path=$(echo '/${{ github.action_path }}' | sed -e 's/\\/\//g' -e 's/://')
-        "$action_path/setup-fortran.sh"
+      name: Setup toolchain
       shell: bash
       env:
         COMPILER: ${{ inputs.compiler }}
         VERSION: ${{ inputs.version }}
+      run: |
+        action_path=$(echo '/${{ github.action_path }}' | sed -e 's/\\/\//g' -e 's/://')
+        source "$action_path/setup-fortran.sh"
+        
+        compiler=${COMPILER:-gcc}
+        platform=$(uname -s)
+
+        echo "detected C compiler $compiler"
+        echo "detected platform $platform"
+
+        case $compiler in
+          gcc)
+            version=${VERSION:-9}
+            ;;
+          *)
+            exit 1
+            ;;
+        esac
+
+        case $platform in
+          Linux*)
+            install_gcc_apt
+            ;;
+          Darwin*)
+            install_gcc_brew
+            ;;
+          MINGW*)
+            install_gcc_choco
+            ;;
+          MSYS*)
+            install_gcc_choco
+            ;;
+          *)
+            exit 1
+            ;;
+        esac
+
+        which "${FC}"
+        which "${CC}"
+
+        echo "fc=${FC}" >> $GITHUB_OUTPUT
+        echo "cc=${CC}" >> $GITHUB_OUTPUT
+
+    - name: Link mingw DLL (Windows)
+      if: runner.os == 'Windows'
+      shell: bash
+      run: |
+        FCDIR=/c/ProgramData/Chocolatey/bin
+        LNDIR=/c/ProgramData/Chocolatey/lib/mingw/tools/install/mingw64/bin
+        if [ -d "$FCDIR" ] && [ -f "$LNDIR/libgfortran-5.dll" ] && [ ! -f "$FCDIR/libgfortran-5.dll" ]; then
+            ln -s "$LNDIR/libgfortran-5.dll" "$FCDIR/libgfortran-5.dll"
+        fi
