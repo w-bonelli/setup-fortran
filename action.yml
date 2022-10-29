@@ -31,12 +31,9 @@ runs:
         compiler=${COMPILER:-gcc}
         platform=$(uname -s)
 
-        echo "detected C compiler $compiler"
-        echo "detected platform $platform"
-
         case $compiler in
           gcc)
-            version=${VERSION:-9}
+            version=${VERSION:-11}
             ;;
           *)
             exit 1
@@ -63,16 +60,11 @@ runs:
 
         which "${FC}"
         which "${CC}"
-
+  
+        # set action's output
         echo "fc=${FC}" >> $GITHUB_OUTPUT
         echo "cc=${CC}" >> $GITHUB_OUTPUT
-
-    - name: Link mingw DLL (Windows)
-      if: runner.os == 'Windows'
-      shell: bash
-      run: |
-        FCDIR=/c/ProgramData/Chocolatey/bin
-        LNDIR=/c/ProgramData/Chocolatey/lib/mingw/tools/install/mingw64/bin
-        if [ -d "$FCDIR" ] && [ -f "$LNDIR/libgfortran-5.dll" ] && [ ! -f "$FCDIR/libgfortran-5.dll" ]; then
-            ln -s "$LNDIR/libgfortran-5.dll" "$FCDIR/libgfortran-5.dll"
-        fi
+        
+        # persist environment variables
+        echo "FC=${FC}" >> $GITHUB_ENV
+        echo "CC=${CC}" >> $GITHUB_ENV

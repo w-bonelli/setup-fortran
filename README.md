@@ -33,11 +33,11 @@ jobs:
 
 ## Options
 
-- *compiler*: Compiler toolchain to setup,
-  available options are *gcc*.
+- *compiler*: Compiler toolchain to setup, available options are *gcc*
+- *version*: Version of the compiler toolchain, available options for *gcc* are *5-12*
 
-- *version*: Version of the compiler toolchain,
-  available options for *gcc* are:
+
+## Runner compatibility
 
 |                               | 5       | 6       | 7       | 8       | 9       | 10      | 11      | 12      |
 |-------------------------------|---------|---------|---------|---------|---------|---------|---------|---------|
