@@ -33,11 +33,13 @@ jobs:
 
 ## Options
 
-- *compiler*: Compiler toolchain to setup,
-  available options are *gcc*.
+- *compiler*: Compiler toolchain to setup, available options are *gcc*
+- *version*: Version of the compiler toolchain, available options for *gcc* are *5-12*
 
-- *version*: Version of the compiler toolchain,
-  available options for *gcc* are:
+
+## Runner compatibility
+
+<!-- compat starts -->
 
 |                               | 5       | 6       | 7       | 8       | 9       | 10      | 11      | 12      |
 |-------------------------------|---------|---------|---------|---------|---------|---------|---------|---------|
@@ -49,6 +51,8 @@ jobs:
 | macos-10.15                   |         | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | windows-2022 (windows-latest) |         |         |         | &check; | &check; | &check; | &check; | &check; |
 | windows-2019                  |         |         |         | &check; | &check; | &check; | &check; | &check; |
+
+<!-- compat ends -->
 
 
 ## License
