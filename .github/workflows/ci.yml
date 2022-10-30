@@ -187,6 +187,11 @@ jobs:
       - name: Check for changes
         id: diff
         run: |
+          if ! [ -f compat.csv ]; then
+            echo "diff=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
           diff=$(git diff compat.csv)
           if [[ $diff == "" ]]; then
             echo "No changes found"
