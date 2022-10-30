@@ -16,6 +16,7 @@ on:
 
 jobs:
   test:
+    name: Test compiler setup
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -136,8 +137,8 @@ jobs:
           name: compat
           path: compat/*.csv
 
-  collect:
-    name: Collect compatibility results
+  compat:
+    name: Update compatibility matrix
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -152,6 +153,7 @@ jobs:
 
       - name: Install pandas
         run: |
+          cat compat.csv
           pip install pandas
 
       - name: Download compatibility reports
@@ -162,15 +164,15 @@ jobs:
 
       - name: Concatenate reports
         run: |
-          echo "runner,compiler,version,support" > compat.csv
-          cat compat/*.csv >> compat.csv
+          echo "runner,compiler,version,support" > compat_long.csv
+          cat compat/*.csv >> compat_long.csv
 
       - name: Convert long to wide
         id: merge-reports
         shell: python
         run: |
           import pandas as pd
-          df = pd.read_csv("compat.csv")
+          df = pd.read_csv("compat_long.csv")
           df = pd.pivot(df, index="runner", columns="version", values="support")
           df.to_csv("compat.csv")
 
@@ -182,7 +184,11 @@ jobs:
           if [[ $diff == "" ]]; then
             echo "No changes found"
             exit 0
+          else
+            echo "Compatibility changes found"
+            echo "$diff" > diff.txt
           fi
+          
           
           git config user.name "compatbot"
           git config user.email "actions@users.noreply.github.com"
@@ -194,5 +200,5 @@ jobs:
           git add compat.csv
           git commit -m "Update compatibility matrix"
           git push origin "$branch"
-          gh pr create -B develop -H "$branch" --title "Update compatibility matrix" --body "Created automatically at $now \nDiff:\n$diff"
+          gh pr create -B develop -H "$branch" --title "Update compatibility matrix" --body-file diff.txt
       
