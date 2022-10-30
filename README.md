@@ -39,6 +39,8 @@ jobs:
 
 ## Runner compatibility
 
+<!-- compat starts -->
+
 |                               | 5       | 6       | 7       | 8       | 9       | 10      | 11      | 12      |
 |-------------------------------|---------|---------|---------|---------|---------|---------|---------|---------|
 | ubuntu-22.04                  |         |         |         |         | &check; | &check; | &check; | &check; |
@@ -49,6 +51,8 @@ jobs:
 | macos-10.15                   |         | &check; | &check; | &check; | &check; | &check; | &check; | &check; |
 | windows-2022 (windows-latest) |         |         |         | &check; | &check; | &check; | &check; | &check; |
 | windows-2019                  |         |         |         | &check; | &check; | &check; | &check; | &check; |
+
+<!-- compat ends -->
 
 
 ## License

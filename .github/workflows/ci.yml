@@ -4,19 +4,17 @@ on:
   push:
     branches:
       - main
-      - develop
-      - develop2
+      - develop*
   pull_request:
     branches:
       - main
-      - develop
-      - develop2
+      - develop*
   schedule:
-    - cron: '0 6 * * *' # run at 6 AM UTC every day
+    - cron: '0 6 * * *'
 
 jobs:
   test:
-    name: Test compiler setup
+    name: Test Fortran
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -112,9 +110,9 @@ jobs:
           ${{ env.FC }} -o hw.exe hw.f90 
           for /f "tokens=* usebackq" %%f in (`.\hw.exe`) do @set "OUTPUT=%%f"
           if "%OUTPUT%"=="hello world" (
-            echo "%OUTPUT%"
+            echo %OUTPUT%
           ) else (
-            echo "unexpected output: %OUTPUT%"
+            echo unexpected output: %OUTPUT%
             exit 1
           )
 
@@ -138,7 +136,7 @@ jobs:
           path: compat/*.csv
 
   compat:
-    name: Update compatibility matrix
+    name: Compatibility check
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -151,12 +149,11 @@ jobs:
         with:
           python-version: 3.9
 
-      - name: Install pandas
+      - name: Install packages
         run: |
-          cat compat.csv
-          pip install pandas
+          pip install tabulate pandas
 
-      - name: Download compatibility reports
+      - name: Download reports
         uses: actions/download-artifact@v3
         with:
           name: compat
@@ -167,7 +164,7 @@ jobs:
           echo "runner,compiler,version,support" > compat_long.csv
           cat compat/*.csv >> compat_long.csv
 
-      - name: Convert long to wide
+      - name: Convert to wide CSV and MD table
         id: merge-reports
         shell: python
         run: |
@@ -176,21 +173,45 @@ jobs:
           df = pd.pivot(df, index="runner", columns="version", values="support")
           df = df.sort_values(by=["runner"])
           df.to_csv("compat.csv")
+          with open("compat.md", "w") as file:
+            file.write(df.to_markdown())
 
-      - name: Update README if diff
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: compat
+          path: |
+            compat.csv
+            compat.md
+
+      - name: Check for changes
+        id: diff
         run: |
           diff=$(git diff compat.csv)
           if [[ $diff == "" ]]; then
             echo "No changes found"
-            exit 0
+            echo "diff=false" >> $GITHUB_OUTPUT
           else
             echo "Changes found"
-            echo "$diff" > diff.txt
+            echo "diff=true" >> $GITHUB_OUTPUT
           fi
-          
-          
+
+      - name: Update README
+        if: steps.diff.outputs.diff == 'true'
+        shell: python
+        run: |
+          import re
+          with open("compat.md", "r") as compat, open("README.md", "r+") as readme:
+            table = '\n'.join(compat.readlines())
+            r = re.compile(r'<!\-\- compat starts \-\->.*<!\-\- compat ends \-\->', re.DOTALL)
+            chunk = '<!-- compat starts -->{}<!-- compat ends -->'.format('\n{}\n'.format(table))
+            readme.write(r.sub(chunk, readme.read()))
+
+      - name: Create pull request
+        if: steps.diff.outputs.diff == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
           git config user.name "compatbot"
           git config user.email "actions@users.noreply.github.com"
           
@@ -198,8 +219,10 @@ jobs:
           branch="compat_$now"
           
           git switch -c "$branch"
-          git add compat.csv
+          git add -A
           git commit -m "Update compatibility matrix"
           git push origin "$branch"
-          gh pr create -B develop -H "$branch" --title "Update compatibility matrix" --body-file diff.txt
+          # default="${{ github.event.repository.default_branch }}"
+          default="develop"
+          gh pr create -B "$default" -H "$branch" --title "Update compatibility matrix" --body-file compat.md
       
