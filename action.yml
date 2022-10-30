@@ -31,15 +31,10 @@ runs:
         compiler=${COMPILER:-gcc}
         platform=$(uname -s)
 
-        echo "detected platform $platform"
-
         case $compiler in
           gcc)
             version=${VERSION:-11}
             ;;
-          # intel)
-          #   version=${VERSION:-2022.3.0}
-          #   ;;
           *)
             exit 1
             ;;

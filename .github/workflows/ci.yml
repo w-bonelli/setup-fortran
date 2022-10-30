@@ -1,0 +1,198 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - develop2
+  pull_request:
+    branches:
+      - main
+      - develop
+      - develop2
+  schedule:
+    - cron: '0 6 * * *' # run at 6 AM UTC every day
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, ubuntu-20.04, ubuntu-18.04, macos-12, macos-11, windows-2022, windows-2019]
+        compiler: [gcc]
+        version: [12, 11, 10, 9, 8, 7, 6, 5]
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Fortran
+        continue-on-error: true
+        id: setup-fortran
+        uses: ./
+        with:
+          compiler: ${{ matrix.compiler }}
+          version: ${{ matrix.version }}
+
+      - name: Check compiler version
+        if: steps.setup-fortran.outcome == 'success'
+        shell: bash
+        env:
+          FC: ${{ steps.setup-fortran.outputs.fc }}
+          CC: ${{ steps.setup-fortran.outputs.cc }}
+        run: |
+          fcv=$(${{ env.FC }} --version | head -n 1)
+          ccv=$(${{ env.CC }} --version | head -n 1)
+          
+          echo $fcv
+          echo $ccv
+          
+          fcv=$(echo "${fcv##*)}" | xargs)
+          ccv=$(echo "${ccv##*)}" | xargs)
+          
+          [[ $fcv == ${{ matrix.version }}* ]] || (echo "unexpected Fortran compiler version: $fcv"; exit 1)
+          [[ $ccv == ${{ matrix.version }}* ]] || (echo "unexpected C compiler version: $ccv"; exit 1)
+
+      - name: Test compile program (bash)
+        if: steps.setup-fortran.outcome == 'success'
+        shell: bash
+        env:
+          FC: ${{ steps.setup-fortran.outputs.fc }}
+          CC: ${{ steps.setup-fortran.outputs.cc }}
+        run: |
+          ${{ env.FC }} -o hw hw.f90
+          output=$(./hw '2>&1')
+          [[ "$output" == *"hello world"* ]] && echo "$output" || (echo "Unexpected output: $output"; exit 1)
+
+      - name: Test compile program (Powershell Core)
+        if: steps.setup-fortran.outcome == 'success' && runner.os == 'Windows'
+        shell: pwsh
+        env:
+          FC: ${{ steps.setup-fortran.outputs.fc }}
+          CC: ${{ steps.setup-fortran.outputs.cc }}
+        run: |
+          rm hw.exe
+          ${{ env.FC }} -o hw.exe hw.f90 
+          $output=$(& ".\hw.exe")
+          if ($output -match "hello world") {
+              write-output $output
+          } else {
+              write-output "unexpected output: $output"
+              exit 1
+          }
+      
+      - name: Test compile program (Powershell Desktop)
+        if: steps.setup-fortran.outcome == 'success' && runner.os == 'Windows'
+        shell: powershell
+        env:
+          FC: ${{ steps.setup-fortran.outputs.fc }}
+          CC: ${{ steps.setup-fortran.outputs.cc }}
+        run: |
+          rm hw.exe
+          ${{ env.FC }} -o hw.exe hw.f90 
+          $output=$(& ".\hw.exe")
+          if ($output -match "hello world") {
+              write-output $output
+          } else {
+              write-output "unexpected output: $output"
+              exit 1
+          }
+
+      - name: Test compile program (cmd)
+        if: steps.setup-fortran.outcome == 'success' && runner.os == 'Windows'
+        shell: cmd
+        env:
+          FC: ${{ steps.setup-fortran.outputs.fc }}
+          CC: ${{ steps.setup-fortran.outputs.cc }}
+        run: |
+          del hw.exe
+          ${{ env.FC }} -o hw.exe hw.f90 
+          for /f "tokens=* usebackq" %%f in (`.\hw.exe`) do @set "OUTPUT=%%f"
+          if "%OUTPUT%"=="hello world" (
+            echo "%OUTPUT%"
+          ) else (
+            echo "unexpected output: %OUTPUT%"
+            exit 1
+          )
+
+      - name: Create compatibility report
+        shell: bash
+        run: |
+          if [[ "${{ steps.setup-fortran.outcome }}" == "success" ]]; then
+            support="&check;"
+          else
+            support=""
+          fi
+          
+          mkdir compat
+          prefix="${{ matrix.os }},${{ matrix.compiler }},${{ matrix.version }}"
+          echo "$prefix,$support" >> "compat/${prefix//,/_}.csv"
+
+      - name: Upload compatibility report
+        uses: actions/upload-artifact@v3
+        with:
+          name: compat
+          path: compat/*.csv
+
+  collect:
+    name: Collect compatibility results
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install pandas
+        run: |
+          pip install pandas
+
+      - name: Download compatibility reports
+        uses: actions/download-artifact@v3
+        with:
+          name: compat
+          path: compat
+
+      - name: Concatenate reports
+        run: |
+          echo "runner,compiler,version,support" > compat.csv
+          cat compat/*.csv >> compat.csv
+
+      - name: Convert long to wide
+        id: merge-reports
+        shell: python
+        run: |
+          import pandas as pd
+          df = pd.read_csv("compat.csv")
+          df = pd.pivot(df, index="runner", columns="version", values="support")
+          df.to_csv("compat.csv")
+
+      - name: Update README if diff
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          diff=$(git diff compat.csv)
+          if [[ $diff == "" ]]; then
+            echo "No changes found"
+            exit 0
+          fi
+          
+          git config user.name "compatbot"
+          git config user.email "actions@users.noreply.github.com"
+          
+          now=$(date +'%Y-%m-%dT%H-%M-%S')
+          branch="compat_$now"
+          
+          git switch -c "$branch"
+          git add compat.csv
+          git commit -m "Update compatibility matrix"
+          git push origin "$branch"
+          gh pr create -B develop -H "$branch" --title "Update compatibility matrix" --body "Created automatically at $now \nDiff:\n$diff"
+      

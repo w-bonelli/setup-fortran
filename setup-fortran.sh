@@ -9,6 +9,7 @@ install_gcc_brew()
   ln -fs /usr/local/bin/gcc-${version} /usr/local/bin/gcc
   ln -fs /usr/local/bin/g++-${version} /usr/local/bin/g++
 
+  # link lib dir for previous GCC versions to avoid missing .dylib issues
   for (( i=12; i>4; i-- ))
   do
     gcc_lib_path="/usr/local/opt/gcc/lib/gcc/$i"
@@ -70,6 +71,7 @@ install_gcc_choco()
   export CC="gcc"
   export CXX="g++"
 
+  # missing DLL can cause successfully compiled executables to fail at runtime
   FCDIR=/c/ProgramData/Chocolatey/bin
   LNDIR=/c/ProgramData/Chocolatey/lib/mingw/tools/install/mingw64/bin
   if [ -d "$FCDIR" ] && [ -f "$LNDIR/libgfortran-5.dll" ] && [ ! -f "$FCDIR/libgfortran-5.dll" ]; then
@@ -116,27 +118,11 @@ install_gcc_winlibs()
     exit 1
   fi
 
-  $fetch "$repo/$tag/$zip" > winlibs_mingw.zip
+  $fetch "$repo/$tag/$zip" > gcc.zip
 
-  unzip -qo winlibs_mingw.zip "mingw64/bin/*" -d /
+  unzip -qo gcc.zip "mingw64/bin/*" -d /
 
   export FC="gfortran"
   export CC="gcc"
   export CXX="g++"
-
-  default_gfc="/c/ProgramData/Chocolatey/bin/gfortran"
-  default_gcc="/c/ProgramData/Chocolatey/bin/gcc"
-  default_gcx="/c/ProgramData/Chocolatey/bin/g++"
-
-  [ -f $default_gfc ] && mv $default_gfc "$RUNNER_TEMP/gfortran"
-  [ -f $default_gcc ] && mv $default_gcc "$RUNNER_TEMP/gcc"
-  [ -f $default_gcx ] && mv $default_gcx "$RUNNER_TEMP/g++"
-
-  default_gfc="/c/Strawberry/c/bin/gfortran"
-  default_gcc="/c/Strawberry/c/bin/gcc"
-  default_gcx="/c/Strawberry/c/bin/g++"
-
-  [ -f $default_gfc ] && mv $default_gfc "$RUNNER_TEMP/gfortran"
-  [ -f $default_gcc ] && mv $default_gcc "$RUNNER_TEMP/gcc"
-  [ -f $default_gcx ] && mv $default_gcx "$RUNNER_TEMP/g++"
 }
