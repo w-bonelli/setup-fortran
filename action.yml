@@ -89,6 +89,7 @@ runs:
           # persist environment variables
           echo "FC=${FC}" >> $GITHUB_ENV
           echo "CC=${CC}" >> $GITHUB_ENV
+          echo "LDFLAGS=${LDFLAGS}" >> $GITHUB_ENV
         fi
 
     - name: Save cache
