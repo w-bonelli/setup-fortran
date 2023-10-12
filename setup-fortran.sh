@@ -14,10 +14,11 @@ require_fetch()
   fi
 }
 
-
 install_gcc_brew()
 {
   brew install gcc@${version}
+
+  # make unversioned symlinks
   ln -fs /usr/local/bin/gfortran-${version} /usr/local/bin/gfortran
   ln -fs /usr/local/bin/gcc-${version} /usr/local/bin/gcc
   ln -fs /usr/local/bin/g++-${version} /usr/local/bin/g++

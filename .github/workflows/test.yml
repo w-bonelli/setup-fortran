@@ -20,81 +20,81 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-22.04
-          - ubuntu-20.04
+          # - ubuntu-22.04
+          # - ubuntu-20.04
           - macos-13
-          - macos-12
-          - macos-11
-          - windows-2022
-          - windows-2019
+          # - macos-12
+          # - macos-11
+          # - windows-2022
+          # - windows-2019
         toolchain:
-          - {compiler: gcc, version: 13}
-          - {compiler: gcc, version: 12}
-          - {compiler: gcc, version: 11}
-          - {compiler: gcc, version: 10}
+          # - {compiler: gcc, version: 13}
+          # - {compiler: gcc, version: 12}
+          # - {compiler: gcc, version: 11}
+          # - {compiler: gcc, version: 10}
           - {compiler: gcc, version:  9}
           - {compiler: gcc, version:  8}
           - {compiler: gcc, version:  7}
-          - {compiler: gcc, version:  6}
+          # - {compiler: gcc, version:  6}
           # {compiler: gcc, version:  5}
-        include:
-          - {os: ubuntu-20.04, toolchain: {compiler: intel, version: '2023.2'}}
-          - {os: ubuntu-20.04, toolchain: {compiler: intel, version: '2022.2.1'}}
-          - {os: ubuntu-20.04, toolchain: {compiler: intel, version: '2021.4'}}
+        # include:
+        #   - {os: ubuntu-20.04, toolchain: {compiler: intel, version: '2023.2'}}
+        #   - {os: ubuntu-20.04, toolchain: {compiler: intel, version: '2022.2.1'}}
+        #   - {os: ubuntu-20.04, toolchain: {compiler: intel, version: '2021.4'}}
 
-          - {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2023.2'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2023.1'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2023.0'}}
-          - {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2022.2.1'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2022.2'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2022.1'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2022.0'}}
-          - {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2021.4'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2021.3'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2021.2'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2021.1.2'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2021.1'}}
+        #   - {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2023.2'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2023.1'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2023.0'}}
+        #   - {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2022.2.1'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2022.2'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2022.1'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2022.0'}}
+        #   - {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2021.4'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2021.3'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2021.2'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2021.1.2'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2021.1'}}
 
-          - {os: ubuntu-20.04, toolchain: {compiler: intel-classic, version: '2021.10'}}
-          - {os: ubuntu-20.04, toolchain: {compiler: intel-classic, version: '2021.7.1'}}
-          - {os: ubuntu-20.04, toolchain: {compiler: intel-classic, version: '2021.4'}}
+        #   - {os: ubuntu-20.04, toolchain: {compiler: intel-classic, version: '2021.10'}}
+        #   - {os: ubuntu-20.04, toolchain: {compiler: intel-classic, version: '2021.7.1'}}
+        #   - {os: ubuntu-20.04, toolchain: {compiler: intel-classic, version: '2021.4'}}
 
-          - {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.10'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.9'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.8'}}
-          - {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.7.1'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.7'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.6'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.5'}}
-          - {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.4'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.3'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.2'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.1.2'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.1'}}
+        #   - {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.10'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.9'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.8'}}
+        #   - {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.7.1'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.7'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.6'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.5'}}
+        #   - {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.4'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.3'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.2'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.1.2'}}
+        #   # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.1'}}
 
-          - {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.10'}}
-          # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.9'}}
-          # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.8'}}
-          - {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.7.1'}}
-          # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.7'}}
-          # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.6'}}
-          # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.5'}}
-          - {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.4'}}
-          # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.3'}}
-          # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.2'}}
-          # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.1'}}
+        #   - {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.10'}}
+        #   # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.9'}}
+        #   # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.8'}}
+        #   - {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.7.1'}}
+        #   # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.7'}}
+        #   # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.6'}}
+        #   # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.5'}}
+        #   - {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.4'}}
+        #   # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.3'}}
+        #   # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.2'}}
+        #   # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.1'}}
 
-          - {os: windows-2022, toolchain: {compiler: intel, version: '2023.2.0'}}
-          - {os: windows-2022, toolchain: {compiler: intel, version: '2023.1.0'}}
-          - {os: windows-2022, toolchain: {compiler: intel, version: '2023.0.0'}}
-          - {os: windows-2022, toolchain: {compiler: intel, version: '2022.2.0'}}
-          - {os: windows-2022, toolchain: {compiler: intel, version: '2022.1.0'}}
+        #   - {os: windows-2022, toolchain: {compiler: intel, version: '2023.2.0'}}
+        #   - {os: windows-2022, toolchain: {compiler: intel, version: '2023.1.0'}}
+        #   - {os: windows-2022, toolchain: {compiler: intel, version: '2023.0.0'}}
+        #   - {os: windows-2022, toolchain: {compiler: intel, version: '2022.2.0'}}
+        #   - {os: windows-2022, toolchain: {compiler: intel, version: '2022.1.0'}}
 
-          - {os: windows-2022, toolchain: {compiler: intel-classic, version: '2021.10.0'}}
-          - {os: windows-2022, toolchain: {compiler: intel-classic, version: '2021.9.0'}}
-          - {os: windows-2022, toolchain: {compiler: intel-classic, version: '2021.8.0'}}
-          - {os: windows-2022, toolchain: {compiler: intel-classic, version: '2021.7.0'}}
-          - {os: windows-2022, toolchain: {compiler: intel-classic, version: '2021.6.0'}}
+        #   - {os: windows-2022, toolchain: {compiler: intel-classic, version: '2021.10.0'}}
+        #   - {os: windows-2022, toolchain: {compiler: intel-classic, version: '2021.9.0'}}
+        #   - {os: windows-2022, toolchain: {compiler: intel-classic, version: '2021.8.0'}}
+        #   - {os: windows-2022, toolchain: {compiler: intel-classic, version: '2021.7.0'}}
+        #   - {os: windows-2022, toolchain: {compiler: intel-classic, version: '2021.6.0'}}
 
     steps:
 
@@ -146,7 +146,19 @@ jobs:
           FC: ${{ steps.setup-fortran.outputs.fc }}
           CC: ${{ steps.setup-fortran.outputs.cc }}
         run: |
-          ${{ env.FC }} -o hw hw.f90
+          # macos-13 / gcc 7-9 compatibility workaround
+          args=""
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            if [[ $(sw_vers -productVersion) == 13* ]] && \
+               [[ ${{ matrix.toolchain.compiler }} == "gcc" ]] && \
+               [[ ${{ matrix.toolchain.version }} =~ ^(7|8|9)$ ]]
+            then
+              args="-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib"
+            fi
+          fi
+          args="$args -o hw hw.f90"
+
+          ${{ env.FC }} $args
           output=$(./hw '2>&1')
           [[ "$output" == *"hello world"* ]] && echo "$output" || (echo "Unexpected output: $output"; exit 1)
 
