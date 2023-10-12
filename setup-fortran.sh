@@ -14,10 +14,20 @@ require_fetch()
   fi
 }
 
-
 install_gcc_brew()
 {
   brew install gcc@${version}
+
+  # macos-13 / gcc 7-9 compatibility workaround
+  if [ "$RUNNER_OS" == "macOS" ]; then
+    mac_ver=$(sw_vers -productVersion)
+    if [[ $mac_ver == 13* ]] & [[ $version =~ ^(7|8|9)$ ]]; then
+      mv /usr/local/bin/gfortran-${version} $RUNNER_TEMP/gfortran-${version}
+      printf "#!/bin/sh\ngfortran -L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib" > /usr/local/bin/gfortran-${version}
+    fi
+  fi
+
+  # make unversioned symlinks
   ln -fs /usr/local/bin/gfortran-${version} /usr/local/bin/gfortran
   ln -fs /usr/local/bin/gcc-${version} /usr/local/bin/gcc
   ln -fs /usr/local/bin/g++-${version} /usr/local/bin/g++
