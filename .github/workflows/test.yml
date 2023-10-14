@@ -168,19 +168,19 @@ jobs:
               args="-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib"
             fi
           fi
-          args="$args -o hw hw.f90"
+          args="$args -o hw"
 
-          ${{ env.FC }} $args
+          ${{ env.FC }} $args hw.f90
           output=$(./hw '2>&1')
           [[ "$output" == *"hello world"* ]] && echo "$output" || (echo "Unexpected Fortran program output: $output"; exit 1)
           rm hw
 
-          ${{ env.CC }} $args
+          ${{ env.CC }} $args hw.c
           output=$(./hw '2>&1')
           [[ "$output" == *"hello world"* ]] && echo "$output" || (echo "Unexpected C program output: $output"; exit 1)
           rm hw
 
-          ${{ env.CXX }} $args
+          ${{ env.CXX }} $args hw.cpp
           output=$(./hw '2>&1')
           [[ "$output" == *"hello world"* ]] && echo "$output" || (echo "Unexpected C++ program output: $output"; exit 1)
           rm hw
@@ -192,7 +192,6 @@ jobs:
           FC: ${{ steps.setup-fortran.outputs.fc }}
           CC: ${{ steps.setup-fortran.outputs.cc }}
         run: |
-          rm hw.exe
           ${{ env.FC }} -o hw.exe hw.f90 
           $output=$(& ".\hw.exe")
           if ($output -match "hello world") {
@@ -201,6 +200,7 @@ jobs:
               write-output "unexpected output: $output"
               exit 1
           }
+          rm hw.exe
       
       - name: Test compile program (Powershell Desktop)
         if: ${{ steps.setup-fortran.outcome == 'success' && runner.os == 'Windows' }}
@@ -209,7 +209,6 @@ jobs:
           FC: ${{ steps.setup-fortran.outputs.fc }}
           CC: ${{ steps.setup-fortran.outputs.cc }}
         run: |
-          rm hw.exe
           ${{ env.FC }} -o hw.exe hw.f90 
           $output=$(& ".\hw.exe")
           if ($output -match "hello world") {
@@ -218,6 +217,7 @@ jobs:
               write-output "unexpected output: $output"
               exit 1
           }
+          rm hw.exe
 
       - name: Test compile program (cmd)
         if: ${{ steps.setup-fortran.outcome == 'success' && runner.os == 'Windows' }}
@@ -226,7 +226,6 @@ jobs:
           FC: ${{ steps.setup-fortran.outputs.fc }}
           CC: ${{ steps.setup-fortran.outputs.cc }}
         run: |
-          del hw.exe
           ${{ env.FC }} -o hw.exe hw.f90 
           for /f "tokens=* usebackq" %%f in (`.\hw.exe`) do @set "OUTPUT=%%f"
           if "%OUTPUT%"=="hello world" (
@@ -235,6 +234,7 @@ jobs:
             echo unexpected output: %OUTPUT%
             exit 1
           )
+          del hw.exe
 
       - name: Create compatibility report
         shell: bash
