@@ -83,12 +83,10 @@ runs:
         esac
 
         if ! ([ "$RUNNER_OS" == "Windows" ] && [[ "${{ inputs.compiler }}" =~ "intel" ]]); then
-          which "${FC}"
-          which "${CC}"
-          
-          # persist environment variables
+          # save environment variables
           echo "FC=${FC}" >> $GITHUB_ENV
           echo "CC=${CC}" >> $GITHUB_ENV
+          echo "CXX=${CXX}" >> $GITHUB_ENV
         fi
 
     - name: Save cache
@@ -111,6 +109,9 @@ runs:
       shell: bash
       id: outputs
       run: |
+        # on windows the compilers may have been restored
+        # from cache, so we don't know if env vars have
+        # been set already
         if [ "$RUNNER_OS" == "Windows" ]; then
           if [[ "${{ inputs.compiler }}" == "intel" ]]; then
             echo fc=ifx>>$GITHUB_OUTPUT
@@ -127,10 +128,12 @@ runs:
           else
             echo fc=$FC>>$GITHUB_OUTPUT
             echo cc=$CC>>$GITHUB_OUTPUT
+            echo cxx=$CC>>$GITHUB_OUTPUT
           fi
         else
           echo fc=$FC>>$GITHUB_OUTPUT
           echo cc=$CC>>$GITHUB_OUTPUT
+          echo cxx=$CXX>>$GITHUB_OUTPUT
         fi
 
         # intel oneapi flag to indicate env has been activated

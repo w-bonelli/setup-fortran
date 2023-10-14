@@ -118,29 +118,37 @@ jobs:
         env:
           FC: ${{ steps.setup-fortran.outputs.fc }}
           CC: ${{ steps.setup-fortran.outputs.cc }}
+          CXX: ${{ steps.setup-fortran.outputs.cxx }}
         run: |
           if ([ "$RUNNER_OS" == "Windows" ] && [[ "${{ matrix.toolchain.compiler }}" =~ "intel" ]]); then
             # only last line of output captured by command substitution, write to temp file instead
             ${{ env.FC }} //QV > "$RUNNER_TEMP/${{ env.FC }}.ver" 2>&1
             ${{ env.CC }} //QV > "$RUNNER_TEMP/${{ env.CC }}.ver" 2>&1
+            ${{ env.CXX }} //QV > "$RUNNER_TEMP/${{ env.CXX }}.ver" 2>&1
 
             fcv=$(cat "$RUNNER_TEMP/${{ env.FC }}.ver" | head -n 1)
             ccv=$(cat "$RUNNER_TEMP/${{ env.CC }}.ver" | head -n 1)
+            cxxv=$(cat "$RUNNER_TEMP/${{ env.CXX }}.ver" | head -n 1)
 
             fcv=${fcv#*Version }
             fcv=${fcv%% Build*}
             ccv=${ccv#*Version }
             ccv=${ccv%% Build*}
+            cxxv=${cxxv#*Version }
+            cxxv=${cxxv%% Build*}
           else
             fcv=$(${{ env.FC }} --version | head -n 1)
             ccv=$(${{ env.CC }} --version | head -n 1)
+            cxxv=$(${{ env.CXX }} --version | head -n 1)
 
             fcv=$(echo "$fcv" | grep -woE '[0123456789.]+' | head -n 1)
             ccv=$(echo "$ccv" | grep -woE '[0123456789.]+' | head -n 1)
+            cxxv=$(echo "$cxxv" | grep -woE '[0123456789.]+' | head -n 1)
           fi
           
           [[ "$fcv" == ${{ matrix.toolchain.version }}* ]] && (echo "found ${{ env.FC }} version: $fcv") || (echo "unexpected ${{ env.FC }} version: $fcv"; exit 1)
           [[ "$ccv" == ${{ matrix.toolchain.version }}* ]] && (echo "found ${{ env.CC }} version: $ccv") || (echo "unexpected ${{ env.CC }} version: $ccv"; exit 1)
+          [[ "$cxxv" == ${{ matrix.toolchain.version }}* ]] && (echo "found ${{ env.CXX }} version: $cxxv") || (echo "unexpected ${{ env.CXX }} version: $cxxv"; exit 1)
 
       - name: Test compile program (bash)
         if: steps.setup-fortran.outcome == 'success'
@@ -148,6 +156,7 @@ jobs:
         env:
           FC: ${{ steps.setup-fortran.outputs.fc }}
           CC: ${{ steps.setup-fortran.outputs.cc }}
+          CXX: ${{ steps.setup-fortran.outputs.cxx }}
         run: |
           # macos-13 / gcc 7-9 compatibility workaround
           args=""
@@ -163,7 +172,18 @@ jobs:
 
           ${{ env.FC }} $args
           output=$(./hw '2>&1')
-          [[ "$output" == *"hello world"* ]] && echo "$output" || (echo "Unexpected output: $output"; exit 1)
+          [[ "$output" == *"hello world"* ]] && echo "$output" || (echo "Unexpected Fortran program output: $output"; exit 1)
+          rm hw
+
+          ${{ env.CC }} $args
+          output=$(./hw '2>&1')
+          [[ "$output" == *"hello world"* ]] && echo "$output" || (echo "Unexpected C program output: $output"; exit 1)
+          rm hw
+
+          ${{ env.CXX }} $args
+          output=$(./hw '2>&1')
+          [[ "$output" == *"hello world"* ]] && echo "$output" || (echo "Unexpected C++ program output: $output"; exit 1)
+          rm hw
 
       - name: Test compile program (Powershell Core)
         if: ${{ steps.setup-fortran.outcome == 'success' && runner.os == 'Windows' }}
