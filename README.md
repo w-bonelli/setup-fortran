@@ -89,7 +89,7 @@ These are made available to subsequent workflow steps via the [`GITHUB_ENV` envi
 
 ## Runner compatibility
 
-Support for the GCC toolchain varies across GitHub-hosted runner images.
+Toolchain support varies across GitHub-hosted runner images.
 
 <!-- compat starts -->
 | runner       | 6       | 7       | 8       | 9       | 10      | 11      | 12      | 13      |
@@ -107,17 +107,7 @@ Support for the GCC toolchain varies across GitHub-hosted runner images.
 
 **Note:** on `macos-13`, gcc 7-9 require flag `-L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib`.
 
-Supported Intel toolchains:
-
-| runner    | compiler       | version |
-| :-------- | :------------- | :------ |
-| ubuntu-\* | intel          | 2023.2, 2023.1, 2023.0, <br/> 2022.2.1, 2022.2, 2022.1, 2022.0, <br/> 2021.4, 2021.2, 2021.1.2, 2021.1 |
-| ubuntu-\* | intel-classic  | 2021.10, 2021.9, 2021.8, <br/> 2021.7.1, 2021.7, 2021.6, 2021.5, <br/> 2021.4, 2021.3, 2021.2, 2021.1.2, 2021.1 |
-| macos-\*  | intel-classic  | 2021.10, 2021.9, 2021.8, <br/> 2021.7.1, 2021.7, 2021.6, 2021.5, <br/> 2021.4, 2021.3, 2021.2, 2021.1 |
-| windows-\* | intel | 2023.2, 2023.1, 2023.0, 2022.2.0, 2022.1.0 |
-| windows-\* | intel-classic | 2021.10.0, 2021.9.0, 2021.8.0, 2021.7.0, 2021.6.0 |
-
-**Note:** on macOS `ifx` is not supported, so the `intel` option redirects to `intel-classic` (`ifort`).
+**Note:** Intel's `ifx` compiler is not supported on macOS, so the `intel` option redirects to `intel-classic` (`ifort`).
 
 ## License
 
