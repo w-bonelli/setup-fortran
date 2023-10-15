@@ -40,64 +40,29 @@ jobs:
           - {compiler: gcc, version:  8}
           - {compiler: gcc, version:  7}
           - {compiler: gcc, version:  6}
-        include:
-          - {os: ubuntu-20.04, toolchain: {compiler: intel, version: '2023.2'}}
-          - {os: ubuntu-20.04, toolchain: {compiler: intel, version: '2022.2.1'}}
-          - {os: ubuntu-20.04, toolchain: {compiler: intel, version: '2021.4'}}
-
-          - {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2023.2'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2023.1'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2023.0'}}
-          - {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2022.2.1'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2022.2'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2022.1'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2022.0'}}
-          - {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2021.4'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2021.3'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2021.2'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2021.1.2'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel, version: '2021.1'}}
-
-          - {os: ubuntu-20.04, toolchain: {compiler: intel-classic, version: '2021.10'}}
-          - {os: ubuntu-20.04, toolchain: {compiler: intel-classic, version: '2021.7.1'}}
-          - {os: ubuntu-20.04, toolchain: {compiler: intel-classic, version: '2021.4'}}
-
-          - {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.10'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.9'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.8'}}
-          - {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.7.1'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.7'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.6'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.5'}}
-          - {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.4'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.3'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.2'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.1.2'}}
-          # {os: ubuntu-22.04, toolchain: {compiler: intel-classic, version: '2021.1'}}
-
-          - {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.10'}}
-          # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.9'}}
-          # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.8'}}
-          - {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.7.1'}}
-          # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.7'}}
-          # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.6'}}
-          # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.5'}}
-          - {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.4'}}
-          # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.3'}}
-          # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.2'}}
-          # {os: macos-12, toolchain: {compiler: intel-classic, version: '2021.1'}}
-
-          - {os: windows-2022, toolchain: {compiler: intel, version: '2023.2.0'}}
-          - {os: windows-2022, toolchain: {compiler: intel, version: '2023.1.0'}}
-          - {os: windows-2022, toolchain: {compiler: intel, version: '2023.0.0'}}
-          - {os: windows-2022, toolchain: {compiler: intel, version: '2022.2.0'}}
-          - {os: windows-2022, toolchain: {compiler: intel, version: '2022.1.0'}}
-
-          - {os: windows-2022, toolchain: {compiler: intel-classic, version: '2021.10.0'}}
-          - {os: windows-2022, toolchain: {compiler: intel-classic, version: '2021.9.0'}}
-          - {os: windows-2022, toolchain: {compiler: intel-classic, version: '2021.8.0'}}
-          - {os: windows-2022, toolchain: {compiler: intel-classic, version: '2021.7.0'}}
-          - {os: windows-2022, toolchain: {compiler: intel-classic, version: '2021.6.0'}}
+          - {compiler: intel, version: '2023.2'}
+          - {compiler: intel, version: '2023.1'}
+          - {compiler: intel, version: '2023.0'}
+          - {compiler: intel, version: '2022.2.1'}
+          - {compiler: intel, version: '2022.2'}
+          - {compiler: intel, version: '2022.1'}
+          - {compiler: intel, version: '2022.0'}
+          - {compiler: intel, version: '2021.4'}
+          - {compiler: intel, version: '2021.2'}
+          - {compiler: intel, version: '2021.1.2'}
+          - {compiler: intel, version: '2021.1'}
+          - {compiler: intel-classic, version: '2021.10'}
+          - {compiler: intel-classic, version: '2021.9'}
+          - {compiler: intel-classic, version: '2021.8'}
+          - {compiler: intel-classic, version: '2021.7.1'}
+          - {compiler: intel-classic, version: '2021.7'}
+          - {compiler: intel-classic, version: '2021.6'}
+          - {compiler: intel-classic, version: '2021.5'}
+          - {compiler: intel-classic, version: '2021.4'}
+          - {compiler: intel-classic, version: '2021.3'}
+          - {compiler: intel-classic, version: '2021.2'}
+          - {compiler: intel-classic, version: '2021.1.2'}
+          - {compiler: intel-classic, version: '2021.1'}
 
     steps:
 
