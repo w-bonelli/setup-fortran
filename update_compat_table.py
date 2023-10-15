@@ -16,19 +16,9 @@ assert update_path.is_file()
 with open(compat_path, "r") as compat:
     table = "".join(compat.readlines())
     r = re.compile(
-        r"<!\-\- "
-        + name
-        + r" compat starts \-\->.*<!\-\- "
-        + name
-        + r" compat ends \-\->",
+        r"<!\-\- compat starts \-\->.*<!\-\- compat ends \-\->",
         re.DOTALL,
     )
-    ct = (
-        "<!-- "
-        + name
-        + " compat starts -->{}<!-- ".format("\n{}\n".format(table))
-        + name
-        + " compat ends -->"
-    )
+    ct = '<!-- compat starts -->{}<!-- compat ends -->'.format('\n{}\n'.format(table))
     readme = update_path.open().read()
     update_path.open("w").write(r.sub(ct, readme))
