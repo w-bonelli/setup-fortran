@@ -25,6 +25,8 @@ Action to setup a Fortran compiler.
 
 This action sets up a Fortran compiler on Ubuntu, MacOS and Windows runners.
 
+C/C++ compilers of the same toolchain/version are provided where possible, otherwise (if a standalone Fortran compiler is selected) defaulting to the preinstalled GCC.
+
 ```yaml
 jobs:
   test:
@@ -65,23 +67,22 @@ jobs:
 - *version*: Version of the compiler toolchain. See [runner compatibility](#runner-compatibility) charts below.
 
 
-
 ## Outputs
 
 The action sets the following outputs:
 
+- `fc`: Fortran compiler executable, e.g. `gfortran`
 - `cc`: C compiler executable, e.g. `gcc`
 - `cxx`: C++ compiler executable, e.g. `g++`
-- `fc`: Fortran compiler executable, e.g. `gfortran`
 
 
 ## Environment variables
 
 The same values are also set as environment variables:
 
+- `FC`
 - `CC`
 - `CXX`
-- `FC`
 
 These are made available to subsequent workflow steps via the [`GITHUB_ENV` environment file mechanism](https://docs.github.com/en/actions/learn-github-actions/environment-variables#passing-values-between-steps-and-jobs-in-a-workflow).
 
