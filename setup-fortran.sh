@@ -60,6 +60,9 @@ install_gcc_apt()
 install_gcc_choco()
 {
   case $version in
+    13)
+      choco install mingw --version 13.2.0 --force
+      ;;
     12)
       choco install mingw --version 12.2.0 --force
       ;;
@@ -76,7 +79,7 @@ install_gcc_choco()
       choco install mingw --version 8.5.0 --force
       ;;
     *)
-      echo "Unsupported version: $version (choose 8-12)"
+      echo "Unsupported version: $version (choose 8-13)"
       exit 1
       ;;
   esac
