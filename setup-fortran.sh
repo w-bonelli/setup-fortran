@@ -62,6 +62,14 @@ install_gcc_choco()
   case $version in
     13)
       choco install mingw --version 13.2.0 --force
+      # mingw 13 on Windows doesn't create shims like <=12 (http://disq.us/p/2w5c5tj)
+      # hide Strawberry compilers and symlink mingw 13 compilers to standard bin dir
+      mv /c/Strawberry/c/bin/gfortran "$RUNNER_TEMP/gfortran"
+      mv /c/Strawberry/c/bin/gcc "$RUNNER_TEMP/gcc"
+      mv /c/Strawberry/c/bin/g++ "$RUNNER_TEMP/g++"
+      ln -s /c/ProgramData/mingw64/mingw64/bin/gfortran /c/ProgramData/Chocolatey/bin/gfortran
+      ln -s /c/ProgramData/mingw64/mingw64/bin/gcc /c/ProgramData/Chocolatey/bin/gcc
+      ln -s /c/ProgramData/mingw64/mingw64/bin/g++ /c/ProgramData/Chocolatey/bin/g++
       ;;
     12)
       choco install mingw --version 12.2.0 --force
