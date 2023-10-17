@@ -67,9 +67,8 @@ install_gcc_choco()
       mv /c/Strawberry/c/bin/gfortran "$RUNNER_TEMP/gfortran"
       mv /c/Strawberry/c/bin/gcc "$RUNNER_TEMP/gcc"
       mv /c/Strawberry/c/bin/g++ "$RUNNER_TEMP/g++"
-      ln -s /c/ProgramData/mingw64/mingw64/bin/gfortran /c/ProgramData/Chocolatey/bin/gfortran
-      ln -s /c/ProgramData/mingw64/mingw64/bin/gcc /c/ProgramData/Chocolatey/bin/gcc
-      ln -s /c/ProgramData/mingw64/mingw64/bin/g++ /c/ProgramData/Chocolatey/bin/g++
+      # add mingw64 bin dir to PATH
+      echo "C:\ProgramData\mingw64\mingw64\bin" >> $GITHUB_PATH
       ;;
     12)
       choco install mingw --version 12.2.0 --force

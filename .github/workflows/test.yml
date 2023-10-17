@@ -85,9 +85,9 @@ jobs:
           compiler: ${{ matrix.toolchain.compiler }}
           version: ${{ matrix.toolchain.version }}
 
-      - name: Setup tmate
-        if: runner.os == 'Windows'
-        uses: mxschmitt/action-tmate@v3
+      # - name: Setup tmate
+      #   if: runner.os == 'Windows'
+      #   uses: mxschmitt/action-tmate@v3
 
       - name: Check compiler version
         if: steps.setup-fortran.outcome == 'success'
