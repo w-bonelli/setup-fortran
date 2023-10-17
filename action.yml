@@ -69,7 +69,7 @@ runs:
 
         case $compiler in
           gcc)
-            version=${VERSION:-11}
+            version=${VERSION:-12}
             install_gcc $platform
             ;;
           intel-classic)
