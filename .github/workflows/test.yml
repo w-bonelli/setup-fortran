@@ -1,5 +1,7 @@
 name: Test
-
+# Workflow has two modes: assert and report
+# Push and pull request run in assert mode.
+# Schedule and dispatch run in report mode.
 on:
   push:
     paths-ignore:
@@ -12,13 +14,49 @@ on:
       - '**.md'
   schedule:
     - cron: '0 0 * * 0'
-
+  workflow_dispatch:
 jobs:
+  options:
+    name: Set options
+    runs-on: ubuntu-latest
+    outputs:
+      mode: ${{ steps.mode.outputs.mode }}
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect mode
+        id: mode
+        run: |
+          # if [[ "$trigger" == "schedule" ]] || [[ "$trigger" == "workflow_dispatch" ]]; then
+          #   echo "mode=report" >> "$GITHUB_OUTPUT"
+          # else
+          #   echo "mode=assert" >> "$GITHUB_OUTPUT"
+          # fi
+          echo "mode=report" >> "$GITHUB_OUTPUT"
+
+      # - name: Set matrix
+      #   working-directory: compat
+      #   id: matrix
+      #   run: |
+      #     mode=${{ steps.mode.outputs.mode }}
+      #     if [[ "$mode" == "report" ]]; then
+      #       yq -o json matrix.yml > matrix.json
+      #     else
+      #       python matrix_json_from_csv.py "long_compat.csv" "matrix.json"
+      #     fi
+      #     matrix=$(cat matrix.json | jq -r tostring | sed -e 's/"/\\"/g')
+      #     echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+    
   test:
     name: Test
+    needs: options
     runs-on: ${{ matrix.os }}
+    continue-on-error: true
     strategy:
       fail-fast: false
+      # matrix: ${{ fromJSON(needs.options.outputs.matrix) }}
       matrix:
         os:
           - ubuntu-22.04
@@ -141,7 +179,7 @@ jobs:
       - name: Create compatibility report
         shell: bash
         run: |
-          mkdir compat
+          mkdir -p compat
           support=$([ "${{ steps.setup-fortran.outcome }}" == "success" ] && echo "&check;" || echo "")
           prefix="${{ matrix.os }},${{ matrix.toolchain.compiler }},${{ matrix.toolchain.version }}"
           report="compat/${prefix//,/_}.csv"
@@ -153,11 +191,12 @@ jobs:
         with:
           name: compat
           path: compat/*.csv
-
+  
   compat:
-    name: Report compatibility
-    if: github.event_name != 'pull_request'
-    needs: test
+    name: Assert and/or report compatibility
+    needs: 
+      - options
+      - test
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -173,7 +212,7 @@ jobs:
           python-version: 3.9
 
       - name: Install packages
-        run: pip install tabulate pandas
+        run: pip install -r requirements.txt
 
       - name: Download reports
         uses: actions/download-artifact@v3
@@ -183,11 +222,11 @@ jobs:
 
       - name: Concatenate reports
         run: |
-          echo "runner,compiler,version,support" > long_compat.csv
-          cat compat/*.csv >> long_compat.csv
+          echo "runner,compiler,version,support" > .github/compat/long_compat.csv
+          cat compat/*.csv >> .github/compat/long_compat.csv
 
-      - name: Make wide CSV and MD table
-        working-directory: scripts
+      - name: Make wide reports
+        working-directory: .github/compat
         run: python wide_compat_reports.py "long_compat.csv" "compat.csv"
 
       - name: Upload artifacts
@@ -195,10 +234,12 @@ jobs:
         with:
           name: compat
           path: |
-            compat.csv
-            compat.md
+            .github/compat/long_compat.csv
+            .github/compat/compat.csv
+            .github/compat/compat.md
 
       - name: Check for changes
+        working-directory: .github/compat
         id: diff
         run: |
           if ! [ -f compat.csv ]; then
@@ -214,12 +255,14 @@ jobs:
             echo "Changes found:"
             echo "$diff"
             echo "diff=true" >> $GITHUB_OUTPUT
+            if [[ "${{ needs.options.outputs.mode }}" == "assert" ]]; then
+              exit 1
+            fi
           fi
 
       - name: Update README
-        working-directory: scripts
         if: ${{ steps.diff.outputs.diff == 'true' && github.event_name == 'push' }}
-        run: python update_compat_table.py "compat.md" "README.md"
+        run: python .github/compat/update_compat_table.py ".github/compat/compat.md" "README.md"
 
       - name: Print README diff
         if: ${{ steps.diff.outputs.diff == 'true' && github.event_name == 'push' }}
@@ -238,7 +281,7 @@ jobs:
           default_branch="${{ github.event.repository.default_branch }}"
           
           git switch -c "$updated_branch"
-          git add compat.csv README.md
+          git add .github/compat/compat.csv README.md
           git commit -m "Update compatibility matrix"
           git push -u origin "$updated_branch"
-          gh pr create -B "$default_branch" -H "$updated_branch" --title "Update compatibility matrix" --body-file compat.md
+          gh pr create -B "$default_branch" -H "$updated_branch" --title "Update compatibility matrix" --body-file .github/compat/compat.md
