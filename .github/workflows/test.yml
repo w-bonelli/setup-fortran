@@ -256,7 +256,7 @@ jobs:
             echo "Changes found:"
             echo "$diff"
             echo "diff=true" >> $GITHUB_OUTPUT
-            if [[ "${{ needs.options.outputs.mode }}" == "assert" ]] then
+            if [[ "${{ needs.options.outputs.mode }}" == "assert" ]]; then
               exit 1
             fi
           fi
