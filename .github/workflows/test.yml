@@ -263,7 +263,7 @@ jobs:
 
       - name: Update README
         if: ${{ steps.diff.outputs.diff == 'true' && github.event_name == 'push' }}
-        run: python update_compat_table.py "compat/compat.md" "README.md"
+        run: python compat/update_compat_table.py "compat/compat.md" "README.md"
 
       - name: Print README diff
         if: ${{ steps.diff.outputs.diff == 'true' && github.event_name == 'push' }}
