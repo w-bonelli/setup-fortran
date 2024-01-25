@@ -29,7 +29,7 @@ jobs:
       - name: Detect mode
         id: mode
         run: |
-          if [[ "$trigger" == "schedule" ]] | [[ "$trigger" == "workflow_dispatch" ]] then
+          if [[ "$trigger" == "schedule" ]] || [[ "$trigger" == "workflow_dispatch" ]]; then
             echo "mode=report" >> "$GITHUB_OUTPUT"
           else
             echo "mode=assert" >> "$GITHUB_OUTPUT"
@@ -40,7 +40,7 @@ jobs:
         id: matrix
         run: |
           mode=${{ steps.mode.outputs.mode }}
-          if [[ "$mode" == "report" ]] then
+          if [[ "$mode" == "report" ]]; then
             yq -o json matrix.yml > matrix.json
           else
             python matrix_json_from_csv.py "compat.csv" "matrix.json"
