@@ -226,7 +226,7 @@ jobs:
           cat compat/*.csv >> long_compat.csv
 
       - name: Make wide reports
-        working-directory: scripts
+        working-directory: compat
         run: python wide_compat_reports.py "long_compat.csv" "compat.csv"
 
       - name: Upload artifacts
@@ -260,7 +260,7 @@ jobs:
           fi
 
       - name: Update README
-        working-directory: scripts
+        working-directory: compat
         if: ${{ steps.diff.outputs.diff == 'true' && github.event_name == 'push' }}
         run: python update_compat_table.py "compat.md" "README.md"
 
