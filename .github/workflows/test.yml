@@ -43,7 +43,7 @@ jobs:
       #     if [[ "$mode" == "report" ]]; then
       #       yq -o json matrix.yml > matrix.json
       #     else
-      #       python matrix_json_from_csv.py "compat.csv" "matrix.json"
+      #       python matrix_json_from_csv.py "long_compat.csv" "matrix.json"
       #     fi
       #     matrix=$(cat matrix.json | jq -r tostring | sed -e 's/"/\\"/g')
       #     echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
@@ -177,7 +177,7 @@ jobs:
       - name: Create compatibility report
         shell: bash
         run: |
-          mkdir compat
+          mkdir -p compat
           support=$([ "${{ steps.setup-fortran.outcome }}" == "success" ] && echo "&check;" || echo "")
           prefix="${{ matrix.os }},${{ matrix.toolchain.compiler }},${{ matrix.toolchain.version }}"
           report="compat/${prefix//,/_}.csv"
