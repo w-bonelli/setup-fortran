@@ -1,1 +1,3 @@
-compat/**.json
+.github/compat/**.json
+**/.DS_Store
+venv/

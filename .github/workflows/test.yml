@@ -212,7 +212,7 @@ jobs:
           python-version: 3.9
 
       - name: Install packages
-        run: pip install tabulate pandas
+        run: pip install -r requirements.txt
 
       - name: Download reports
         uses: actions/download-artifact@v3
@@ -222,12 +222,11 @@ jobs:
 
       - name: Concatenate reports
         run: |
-          echo "runner,compiler,version,support" > long_compat.csv
-          cat compat/*.csv >> long_compat.csv
-          mv long_compat.csv compat/long_compat.csv
+          echo "runner,compiler,version,support" > .github/compat/long_compat.csv
+          cat compat/*.csv >> .github/compat/long_compat.csv
 
       - name: Make wide reports
-        working-directory: compat
+        working-directory: .github/compat
         run: python wide_compat_reports.py "long_compat.csv" "compat.csv"
 
       - name: Upload artifacts
@@ -235,12 +234,12 @@ jobs:
         with:
           name: compat
           path: |
-            compat/long_compat.csv
-            compat/compat.csv
-            compat/compat.md
+            .github/compat/long_compat.csv
+            .github/compat/compat.csv
+            .github/compat/compat.md
 
       - name: Check for changes
-        working-directory: compat
+        working-directory: .github/compat
         id: diff
         run: |
           if ! [ -f compat.csv ]; then
@@ -263,7 +262,7 @@ jobs:
 
       - name: Update README
         if: ${{ steps.diff.outputs.diff == 'true' && github.event_name == 'push' }}
-        run: python compat/update_compat_table.py "compat/compat.md" "README.md"
+        run: python .github/compat/update_compat_table.py ".github/compat/compat.md" "README.md"
 
       - name: Print README diff
         if: ${{ steps.diff.outputs.diff == 'true' && github.event_name == 'push' }}
@@ -282,7 +281,7 @@ jobs:
           default_branch="${{ github.event.repository.default_branch }}"
           
           git switch -c "$updated_branch"
-          git add compat/compat.csv README.md
+          git add .github/compat/compat.csv README.md
           git commit -m "Update compatibility matrix"
           git push -u origin "$updated_branch"
-          gh pr create -B "$default_branch" -H "$updated_branch" --title "Update compatibility matrix" --body-file compat/compat.md
+          gh pr create -B "$default_branch" -H "$updated_branch" --title "Update compatibility matrix" --body-file .github/compat/compat.md
