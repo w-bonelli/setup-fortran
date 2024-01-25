@@ -222,8 +222,9 @@ jobs:
 
       - name: Concatenate reports
         run: |
-          echo "runner,compiler,version,support" > compat/long_compat.csv
-          cat compat/*.csv >> compat/long_compat.csv
+          echo "runner,compiler,version,support" > long_compat.csv
+          cat compat/*.csv >> long_compat.csv
+          mv long_compat.csv compat/long_compat.csv
 
       - name: Make wide reports
         working-directory: compat
