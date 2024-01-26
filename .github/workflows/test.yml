@@ -48,7 +48,7 @@ jobs:
           fi
           matrix=$(cat matrix.json | jq -r tostring | sed -e 's/"/\\"/g')
           echo $matrix
-          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo 'matrix=$matrix' >> "$GITHUB_OUTPUT"
     
   test:
     name: Test
