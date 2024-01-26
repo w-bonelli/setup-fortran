@@ -56,7 +56,7 @@ jobs:
     name: Test
     needs: options
     runs-on: ${{ matrix.os }}
-    continue-on-error: true
+    continue-on-error: ${{ needs.options.outputs.mode == 'report' }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.options.outputs.matrix) }}
@@ -66,7 +66,7 @@ jobs:
 
       - name: Setup Fortran
         id: setup-fortran
-        continue-on-error: true
+        continue-on-error: ${{ needs.options.outputs.mode == 'report' }}
         uses: ./
         with:
           compiler: ${{ matrix.toolchain.compiler }}
@@ -80,7 +80,7 @@ jobs:
           version: ${{ matrix.toolchain.version }}
       
       - name: Test C compiler
-        continue-on-error: true
+        continue-on-error: ${{ needs.options.outputs.mode == 'report' }}
         if: steps.setup-fortran.outcome == 'success'
         uses: ./.github/actions/test-cc
         with:
@@ -88,7 +88,7 @@ jobs:
           version: ${{ matrix.toolchain.version }}
       
       - name: Test C++ compiler
-        continue-on-error: true
+        continue-on-error: ${{ needs.options.outputs.mode == 'report' }}
         if: steps.setup-fortran.outcome == 'success'
         uses: ./.github/actions/test-cxx
         with:
@@ -112,10 +112,11 @@ jobs:
           path: compat/*.csv
   
   compat:
-    name: Assert and/or report compatibility
+    name: Report compatibility
     needs: 
       - options
       - test
+    if: ${{ needs.options.outputs.mode == 'report' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -176,9 +177,6 @@ jobs:
             echo "Changes found:"
             echo "$diff"
             echo "diff=true" >> $GITHUB_OUTPUT
-            if [[ "${{ needs.options.outputs.mode }}" == "assert" ]]; then
-              exit 1
-            fi
           fi
 
       - name: Update README
