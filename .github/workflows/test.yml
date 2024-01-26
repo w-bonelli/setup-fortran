@@ -47,6 +47,7 @@ jobs:
             python matrix_json_from_csv.py "long_compat.csv" "matrix.json"
           fi
           matrix=$(cat matrix.json | jq -r tostring | sed -e 's/"/\\"/g')
+          echo $matrix
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
     
   test:
@@ -227,7 +228,9 @@ jobs:
 
       - name: Make wide reports
         working-directory: .github/compat
-        run: python wide_compat_reports.py "long_compat.csv" "compat.csv"
+        run: |
+          python wide_compat_reports.py "long_compat.csv" "compat.csv"
+          cat compat.md
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
