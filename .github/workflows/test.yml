@@ -46,7 +46,8 @@ jobs:
           else
             python matrix_json_from_csv.py "long_compat.csv" "matrix.json"
           fi
-          matrix=$(cat matrix.json | jq -r tostring | sed -e 's/"/\\"/g')
+          # matrix=$(cat matrix.json | jq -r tostring | sed -e 's/"/\\"/g')
+          matrix=$(cat matrix.json | jq -r tostring)
           # echo $matrix
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
 
