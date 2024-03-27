@@ -67,6 +67,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup micromamba
+        uses: mamba-org/setup-micromamba@v1
+        if: runner.os == 'macOS' && contains(matrix.toolchain.compiler, 'lfortran')
+        with:
+          init-shell: bash
+          post-cleanup: 'all'
+
       - name: Setup Fortran
         id: setup-fortran
         continue-on-error: ${{ needs.options.outputs.mode == 'report' }}
